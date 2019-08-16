@@ -1,20 +1,20 @@
 import './style.css';
 
 const view = document.getElementById('root');
-const viewBody = view.querySelector('table tbody');
 const newBookButton = document.getElementById('new-book-button');
 // Store new book objects from user input in an array
 const myLibrary = [];
 
-function Book(title = '', author = '', pages = 0, read = 'not read yet') {
+function Book(title = '', author = '', pages = 0, read = false) {
   this.title = title;
   this.author = author;
   this.pages = pages;
-  this.read = read;
+  this.read = read ? 'is read' : 'not read yet';
 }
 
-const book1 = new Book('JavaScript', 'Saad Tarhi', 350, 'not read yet');
-const book2 = new Book('CSS', 'Saad Tarhi', 350, 'not read yet');
+// this is just an example to fill our table. To delete later!
+const book1 = new Book('JavaScript', 'Saad Tarhi', 350, false);
+const book2 = new Book('CSS', 'Saad Tarhi', 350, false);
 myLibrary.push(book1, book2);
 
 /**
@@ -34,7 +34,7 @@ function addBookToLibrary(row) {
   book.title = row.querySelector('#title').value;
   book.author = row.querySelector('#author').value;
   book.pages = row.querySelector('#pages').value;
-  book.read = row.querySelector('#read').checked;
+  book.read = row.querySelector('#read').checked ? 'is read' : 'not read yet';
   myLibrary.push(book);
 }
 
@@ -80,13 +80,12 @@ function render(books) {
       <td>${book.read}</td>
     `;
     tr.insertAdjacentHTML('afterbegin', bookInfo);
-    viewBody.append(tr);
+    view.append(tr);
   });
 }
 
 newBookButton.onclick = () => {
-  // render([new Book()]);
-  addToTable(viewBody);
+  addToTable(view);
 };
 
 render(myLibrary);
