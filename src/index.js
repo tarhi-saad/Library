@@ -64,6 +64,11 @@ function render(books, row = null) {
 
 // User input
 newBookButton.onclick = () => {
+  if (view.querySelector('input')) {
+    view.querySelector('input').focus();
+    return;
+  }
+
   const tr = document.createElement('tr');
   const cells = `
     <td><input type="text" id="title" name="title" size="1"></td>
