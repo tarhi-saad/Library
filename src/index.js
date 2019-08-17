@@ -12,6 +12,11 @@ function Book(title = '', author = '', pages = 0, read = false) {
   this.read = read ? 'is read' : 'not read yet';
 }
 
+Book.prototype.readStatus = function readStatus() {
+  if (this.read === 'is read') this.read = 'not read yet';
+  else this.read = 'is read';
+};
+
 // this is just an example to fill our table. To delete later!
 const book1 = new Book('JavaScript', 'Saad Tarhi', 350, false);
 const book2 = new Book('CSS', 'Saad Tarhi', 350, false);
@@ -40,6 +45,7 @@ function render(books, row = null) {
       `
       <td>
         <button class="remove-book">Remove</button>
+        <button class="is-read">Is read ?</button>
       </td>
     `,
     );
@@ -55,7 +61,10 @@ function render(books, row = null) {
       <td>${book.author}</td>
       <td>${book.pages}</td>
       <td>${book.read}</td>
-      <td><button class="remove-book">Remove</button></td>
+      <td>
+        <button class="remove-book">Remove</button>
+        <button class="is-read">Is read ?</button>
+      </td>
     `;
     tr.insertAdjacentHTML('afterbegin', bookInfo);
     view.append(tr);
@@ -96,18 +105,25 @@ newBookButton.onclick = () => {
   };
 };
 
-// Remove book feature
+// "Remove book" feature & "Toggle Read" feature
 view.onclick = (event) => {
   const myTarget = event.target;
-
-  if (myTarget.className !== 'remove-book') return;
-
   const row = myTarget.closest('tr');
-  myLibrary.splice(row.dataset.index, 1);
-  row.remove();
-  view.querySelectorAll('tr').forEach((tr, i) => {
-    tr.dataset.index = i;
-  });
+
+  if (myTarget.className === 'remove-book') {
+    myLibrary.splice(row.dataset.index, 1);
+    row.remove();
+    view.querySelectorAll('tr').forEach((tr, i) => {
+      tr.dataset.index = i;
+    });
+  } else if (myTarget.className === 'is-read') {
+    const myBook = myLibrary[row.dataset.index];
+    const readCell = Array.from(row.querySelectorAll('td')).find(
+      td => td.innerHTML === myBook.read,
+    );
+    myBook.readStatus();
+    readCell.innerHTML = myBook.read;
+  }
 };
 
 render(myLibrary);
