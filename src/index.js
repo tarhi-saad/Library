@@ -38,39 +38,17 @@ function addBookToLibrary(row) {
   myLibrary.push(book);
 }
 
-function addToTable(element) {
-  const tr = document.createElement('tr');
-  const cells = `
-    <td><input type="text" id="title" name="title" size="1"></td>
-    <td><input type="text" id="author" name="author" size="1"></td>
-    <td><input type="number" id="pages" name="pages" min=0></td>
-    <td align="center"><input type="checkbox" id="read" name="read"></td>
-  `;
-  const editControls = `
-    <div class="edit-controls">
-      <button class="edit-ok">OK</button>
-      <button class="edit-cancel">CANCEL</button>
-    </div>
-  `;
-  tr.insertAdjacentHTML('afterbegin', cells + editControls);
-  element.append(tr);
-
-  tr.querySelector('.edit-cancel').onclick = () => {
-    tr.remove();
-  };
-
-  tr.querySelector('.edit-ok').onclick = () => {
-    addBookToLibrary(tr);
-    const tds = tr.querySelectorAll('td');
-    Object.values(myLibrary[myLibrary.length - 1]).map((value, i) => {
-      tds[i].innerHTML = value;
+function render(books, row = null) {
+  if (books.length === 1 && row !== null) {
+    const datas = row.querySelectorAll('td');
+    Object.values(books[0]).map((value, i) => {
+      datas[i].innerHTML = value;
       return value;
     });
-    tr.querySelector('.edit-controls').remove();
-  };
-}
+    row.querySelector('.edit-controls').remove();
+    return;
+  }
 
-function render(books) {
   books.forEach((book) => {
     const tr = document.createElement('tr');
     const bookInfo = `
@@ -85,7 +63,30 @@ function render(books) {
 }
 
 newBookButton.onclick = () => {
-  addToTable(view);
+  const tr = document.createElement('tr');
+  const cells = `
+    <td><input type="text" id="title" name="title" size="1"></td>
+    <td><input type="text" id="author" name="author" size="1"></td>
+    <td><input type="number" id="pages" name="pages" min=0></td>
+    <td align="center"><input type="checkbox" id="read" name="read"></td>
+  `;
+  const editControls = `
+    <div class="edit-controls">
+      <button class="edit-ok">OK</button>
+      <button class="edit-cancel">CANCEL</button>
+    </div>
+  `;
+  tr.insertAdjacentHTML('afterbegin', cells + editControls);
+  view.append(tr);
+  tr.querySelector('input').focus();
+  tr.querySelector('.edit-cancel').onclick = () => {
+    tr.remove();
+  };
+
+  tr.querySelector('.edit-ok').onclick = () => {
+    addBookToLibrary(tr);
+    render([myLibrary[myLibrary.length - 1]], tr);
+  };
 };
 
 render(myLibrary);
