@@ -17,18 +17,6 @@ const book1 = new Book('JavaScript', 'Saad Tarhi', 350, false);
 const book2 = new Book('CSS', 'Saad Tarhi', 350, false);
 myLibrary.push(book1, book2);
 
-/**
- * I want to click on "New book" and get a new "tr" with "td's" as "inputs"
- * Then, have two buttons "Ok/Cancel"
- * The "Ok" button will save changes:
- * 1- Add "book" object to "myLibrary" array
- * 2- Edit the "innerHTML" of "TD" to remove "inputs" and keep only their "values"
- * TODO: Refractor the code
- * * A function must do a single task
- * * we have two functions to refractor (render & addBookToLibrary)
- * * addBookToLibrary => Add book to library + render the result
- * TODO: Add the feature => Edit book
- */
 function addBookToLibrary(row) {
   const book = new Book();
   book.title = row.querySelector('#title').value;
@@ -39,6 +27,7 @@ function addBookToLibrary(row) {
 }
 
 function render(books, row = null) {
+  // Render the last created book
   if (books.length === 1 && row !== null) {
     const datas = row.querySelectorAll('td');
     Object.values(books[0]).map((value, i) => {
@@ -46,22 +35,34 @@ function render(books, row = null) {
       return value;
     });
     row.querySelector('.edit-controls').remove();
+    row.insertAdjacentHTML(
+      'beforeend',
+      `
+      <td>
+        <button class="remove-book">Remove</button>
+      </td>
+    `,
+    );
     return;
   }
 
-  books.forEach((book) => {
+  // Render all books
+  books.forEach((book, i) => {
     const tr = document.createElement('tr');
+    tr.dataset.index = i;
     const bookInfo = `
       <td>${book.title}</td>
       <td>${book.author}</td>
       <td>${book.pages}</td>
       <td>${book.read}</td>
+      <td><button class="remove-book">Remove</button></td>
     `;
     tr.insertAdjacentHTML('afterbegin', bookInfo);
     view.append(tr);
   });
 }
 
+// User input
 newBookButton.onclick = () => {
   const tr = document.createElement('tr');
   const cells = `
@@ -85,8 +86,23 @@ newBookButton.onclick = () => {
 
   tr.querySelector('.edit-ok').onclick = () => {
     addBookToLibrary(tr);
+    tr.dataset.index = myLibrary.length - 1;
     render([myLibrary[myLibrary.length - 1]], tr);
   };
+};
+
+// Remove book feature
+view.onclick = (event) => {
+  const myTarget = event.target;
+
+  if (myTarget.className !== 'remove-book') return;
+
+  const row = myTarget.closest('tr');
+  myLibrary.splice(row.dataset.index, 1);
+  row.remove();
+  view.querySelectorAll('tr').forEach((tr, i) => {
+    tr.dataset.index = i;
+  });
 };
 
 render(myLibrary);
