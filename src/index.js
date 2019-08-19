@@ -34,7 +34,7 @@ function addBookToLibrary(row) {
 function render(books, row = null) {
   // Render the last created book
   if (books.length === 1 && row !== null) {
-    const datas = row.querySelectorAll('td');
+    const datas = row.cells;
     Object.values(books[0]).map((value, i) => {
       datas[i].innerHTML = value;
       return value;
@@ -46,6 +46,7 @@ function render(books, row = null) {
       <td>
         <button class="remove-book">Remove</button>
         <button class="is-read">Is read ?</button>
+        <button class="edit-book">Edit</button>
       </td>
     `,
     );
@@ -64,11 +65,46 @@ function render(books, row = null) {
       <td>
         <button class="remove-book">Remove</button>
         <button class="is-read">Is read ?</button>
+        <button class="edit-book">Edit</button>
       </td>
     `;
     tr.insertAdjacentHTML('afterbegin', bookInfo);
     view.append(tr);
   });
+}
+
+function editBook(row) {
+  const currentBook = myLibrary[row.dataset.index];
+  const tr = document.createElement('tr');
+  const cells = `
+    <td><input type="text" id="title" name="title" size="1" value="${currentBook.title}"></td>
+    <td><input type="text" id="author" name="author" size="1" value="${currentBook.author}"></td>
+    <td><input type="number" id="pages" name="pages" min=0 value="${currentBook.pages}"></td>
+    <td align="center"><input type="checkbox" id="read" name="read" ${
+  currentBook.read === 'is read' ? 'checked' : ''
+}></td>
+  `;
+  const editControls = `
+    <td class="edit-controls">
+      <button class="edit-ok">OK</button>
+      <button class="edit-cancel">CANCEL</button>
+    </td>
+  `;
+  tr.insertAdjacentHTML('afterbegin', cells + editControls);
+  tr.dataset.index = row.dataset.index;
+  row.replaceWith(tr);
+  tr.querySelector('input').focus();
+  tr.querySelector('.edit-cancel').onclick = () => {
+    tr.remove();
+  };
+
+  tr.querySelector('.edit-ok').onclick = () => {
+    currentBook.title = tr.querySelector('#title').value;
+    currentBook.author = tr.querySelector('#author').value;
+    currentBook.pages = tr.querySelector('#pages').value;
+    currentBook.read = tr.querySelector('#read').checked ? 'is read' : 'not read yet';
+    render([currentBook], tr);
+  };
 }
 
 // User input
@@ -86,10 +122,10 @@ newBookButton.onclick = () => {
     <td align="center"><input type="checkbox" id="read" name="read"></td>
   `;
   const editControls = `
-    <div class="edit-controls">
+    <td class="edit-controls">
       <button class="edit-ok">OK</button>
       <button class="edit-cancel">CANCEL</button>
-    </div>
+    </td>
   `;
   tr.insertAdjacentHTML('afterbegin', cells + editControls);
   view.append(tr);
@@ -105,24 +141,30 @@ newBookButton.onclick = () => {
   };
 };
 
-// "Remove book" feature & "Toggle Read" feature
+// "Remove book" feature & "Toggle Read" feature & "Edit book"
 view.onclick = (event) => {
   const myTarget = event.target;
   const row = myTarget.closest('tr');
 
-  if (myTarget.className === 'remove-book') {
-    myLibrary.splice(row.dataset.index, 1);
-    row.remove();
-    view.querySelectorAll('tr').forEach((tr, i) => {
-      tr.dataset.index = i;
-    });
-  } else if (myTarget.className === 'is-read') {
-    const myBook = myLibrary[row.dataset.index];
-    const readCell = Array.from(row.querySelectorAll('td')).find(
-      td => td.innerHTML === myBook.read,
-    );
-    myBook.readStatus();
-    readCell.innerHTML = myBook.read;
+  switch (myTarget.className) {
+    case 'remove-book':
+      myLibrary.splice(row.dataset.index, 1);
+      row.remove();
+      Array.from(view.rows).forEach((tr, i) => {
+        tr.dataset.index = i;
+      });
+      break;
+    case 'is-read': {
+      const myBook = myLibrary[row.dataset.index];
+      const readCell = Array.from(row.cells).find(td => td.innerHTML === myBook.read);
+      myBook.readStatus();
+      readCell.innerHTML = myBook.read;
+      break;
+    }
+    case 'edit-book':
+      editBook(row);
+      break;
+    default:
   }
 };
 
