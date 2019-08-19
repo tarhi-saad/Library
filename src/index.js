@@ -80,29 +80,23 @@ function editBook(row) {
     <td><input type="text" id="title" name="title" size="1" value="${currentBook.title}"></td>
     <td><input type="text" id="author" name="author" size="1" value="${currentBook.author}"></td>
     <td><input type="number" id="pages" name="pages" min=0 value="${currentBook.pages}"></td>
-    <td align="center"><input type="checkbox" id="read" name="read" ${
-  currentBook.read === 'is read' ? 'checked' : ''
-}></td>
+    <td align="center">${currentBook.read}</td>
   `;
   const editControls = `
     <td class="edit-controls">
+      <button class="remove-book">Remove</button>
+      <button class="is-read">Is read ?</button>
       <button class="edit-ok">OK</button>
-      <button class="edit-cancel">CANCEL</button>
     </td>
   `;
   tr.insertAdjacentHTML('afterbegin', cells + editControls);
   tr.dataset.index = row.dataset.index;
   row.replaceWith(tr);
   tr.querySelector('input').focus();
-  tr.querySelector('.edit-cancel').onclick = () => {
-    tr.remove();
-  };
-
   tr.querySelector('.edit-ok').onclick = () => {
     currentBook.title = tr.querySelector('#title').value;
     currentBook.author = tr.querySelector('#author').value;
     currentBook.pages = tr.querySelector('#pages').value;
-    currentBook.read = tr.querySelector('#read').checked ? 'is read' : 'not read yet';
     render([currentBook], tr);
   };
 }
