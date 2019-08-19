@@ -84,17 +84,17 @@ button {
   background-color: #25816a;
 }
 
-.is-read {
+.edit-book {
   background-color: #f0ad4e;
 }
 
-.is-read:hover,
-.is-read:focus,
-.is-read:active {
+.edit-book:hover,
+.edit-book:focus,
+.edit-book:active {
   background-color: #eb9419;
 }
 
-.is-read:active:focus {
+.edit-book:active:focus {
   background-color: #ca7d11;
 }
 
@@ -112,4 +112,63 @@ table td {
 
 table input[type="number"] {
   max-width: 100px;
+}
+
+/**
+* Toggle Switch
+*/
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 17px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 17px;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 13px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(13px);
+  -ms-transform: translateX(13px);
+  transform: translateX(13px);
 }

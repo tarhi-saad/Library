@@ -9,12 +9,11 @@ function Book(title = '', author = '', pages = 0, read = false) {
   this.title = title;
   this.author = author;
   this.pages = pages;
-  this.read = read ? 'is read' : 'not read yet';
+  this.read = read;
 }
 
 Book.prototype.readStatus = function readStatus() {
-  if (this.read === 'is read') this.read = 'not read yet';
-  else this.read = 'is read';
+  this.read = !this.read;
 };
 
 // this is just an example to fill our table. To delete later!
@@ -27,7 +26,7 @@ function addBookToLibrary(row) {
   book.title = row.querySelector('#title').value;
   book.author = row.querySelector('#author').value;
   book.pages = row.querySelector('#pages').value;
-  book.read = row.querySelector('#read').checked ? 'is read' : 'not read yet';
+  book.read = row.querySelector('#read').checked;
   myLibrary.push(book);
 }
 
@@ -36,6 +35,11 @@ function render(books, row = null) {
   if (books.length === 1 && row !== null) {
     const datas = row.cells;
     Object.values(books[0]).map((value, i) => {
+      if (typeof value === 'boolean') {
+        datas[i].querySelector('#read').checked = value;
+        return value;
+      }
+
       datas[i].innerHTML = value;
       return value;
     });
@@ -44,8 +48,7 @@ function render(books, row = null) {
       'beforeend',
       `
       <td>
-        <button class="edit-book green-btn">Edit</button>
-        <button class="is-read">Is read ?</button>
+        <button class="edit-book">Edit</button>
         <button class="remove-book">Delete</button>
       </td>
     `,
@@ -61,10 +64,14 @@ function render(books, row = null) {
       <td>${book.title}</td>
       <td>${book.author}</td>
       <td>${book.pages}</td>
-      <td>${book.read}</td>
       <td>
-        <button class="edit-book green-btn">Edit</button>
-        <button class="is-read">Is read ?</button>
+        <label class="switch">
+          <input type="checkbox" id="read" class="is-read" ${book.read ? 'checked' : ''}>
+          <span class="slider"></span>
+        </label>
+      </td>
+      <td>
+        <button class="edit-book">Edit</button>
         <button class="remove-book">Delete</button>
       </td>
     `;
@@ -80,12 +87,16 @@ function editBook(row) {
     <td><input type="text" id="title" name="title" size="1" value="${currentBook.title}"></td>
     <td><input type="text" id="author" name="author" size="1" value="${currentBook.author}"></td>
     <td><input type="number" id="pages" name="pages" min=0 value="${currentBook.pages}"></td>
-    <td>${currentBook.read}</td>
+    <td>
+      <label class="switch">
+        <input type="checkbox" id="read" class="is-read" ${currentBook.read ? 'checked' : ''}>
+        <span class="slider"></span>
+      </label>
+    </td>
   `;
   const editControls = `
     <td class="edit-controls">
       <button class="save green-btn">Save</button>
-      <button class="is-read">Is read ?</button>
       <button class="remove-book">Delete</button>
     </td>
   `;
@@ -97,14 +108,15 @@ function editBook(row) {
     currentBook.title = tr.querySelector('#title').value;
     currentBook.author = tr.querySelector('#author').value;
     currentBook.pages = tr.querySelector('#pages').value;
+    currentBook.read = tr.querySelector('#read').checked;
     render([currentBook], tr);
   };
 }
 
 // User input
 newBookButton.onclick = () => {
-  if (view.querySelector('input')) {
-    view.querySelector('input').focus();
+  if (view.querySelector('input[type="text"]')) {
+    view.querySelector('input[type="text"]').focus();
     return;
   }
 
@@ -113,7 +125,12 @@ newBookButton.onclick = () => {
     <td><input type="text" id="title" name="title" size="1"></td>
     <td><input type="text" id="author" name="author" size="1"></td>
     <td><input type="number" id="pages" name="pages" min=0></td>
-    <td><input type="checkbox" id="read" name="read"></td>
+    <td>
+      <label class="switch">
+        <input type="checkbox" id="read" class="is-read">
+        <span class="slider"></span>
+      </label>
+    </td>
   `;
   const editControls = `
     <td class="edit-controls">
@@ -150,12 +167,12 @@ view.onclick = (event) => {
       break;
     case 'is-read': {
       const myBook = myLibrary[row.dataset.index];
-      const readCell = Array.from(row.cells).find(td => td.innerHTML === myBook.read);
+      const readCell = Array.from(row.cells).find(td => td.querySelector('input'));
       myBook.readStatus();
-      readCell.innerHTML = myBook.read;
+      readCell.querySelector('input').checked = myBook.read;
       break;
     }
-    case 'edit-book green-btn':
+    case 'edit-book':
       editBook(row);
       break;
     default:
