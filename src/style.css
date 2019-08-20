@@ -22,6 +22,7 @@ body {
   justify-content: space-between;
   margin: -15px -15px 15px -15px;
   padding: 15px 27px;
+  border-radius: 3px 3px 0 0;
 }
 
 header {
@@ -245,5 +246,8 @@ input:checked + .slider:before {
 .required {
   background-color: #fce4e4;
   border: 1px solid #cc0033;
+}
+
+.required:focus {
   outline: none;
 }

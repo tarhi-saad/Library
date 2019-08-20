@@ -80,6 +80,23 @@ function render(books, row = null) {
   });
 }
 
+function validation(row) {
+  const inputGroup = Array.from(row.querySelectorAll('input:not([type="checkbox"])'));
+  const inputError = inputGroup.find(input => input.value === '');
+
+  if (inputError !== undefined) {
+    inputGroup.map((input) => {
+      if (input === inputError) return input;
+      input.classList.remove('required');
+      return input;
+    });
+    inputError.classList.add('required');
+    inputError.focus();
+    return true;
+  }
+  return false;
+}
+
 function editBook(row) {
   const currentBook = myLibrary[row.dataset.index];
   const tr = document.createElement('tr');
@@ -105,6 +122,8 @@ function editBook(row) {
   row.replaceWith(tr);
   tr.querySelector('input').focus();
   tr.querySelector('.save').onclick = () => {
+    if (validation(tr)) return;
+
     currentBook.title = tr.querySelector('#title').value;
     currentBook.author = tr.querySelector('#author').value;
     currentBook.pages = tr.querySelector('#pages').value;
@@ -146,6 +165,8 @@ newBookButton.onclick = () => {
   };
 
   tr.querySelector('.edit-add').onclick = () => {
+    if (validation(tr)) return;
+
     addBookToLibrary(tr);
     tr.dataset.index = myLibrary.length - 1;
     render([myLibrary[myLibrary.length - 1]], tr);
