@@ -166,6 +166,8 @@ view.onclick = (event) => {
       });
       break;
     case 'is-read': {
+      if (!row.dataset.index) return;
+
       const myBook = myLibrary[row.dataset.index];
       const readCell = Array.from(row.cells).find(td => td.querySelector('input'));
       myBook.readStatus();
