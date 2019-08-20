@@ -6,24 +6,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Library</title>
-  <link href="https://fonts.googleapis.com/css?family=Varela+Round&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Varela+Round|Material+Icons&display=swap" rel="stylesheet">
 </head>
 
 <body>
-  <h1>Library</h1>
-  <button id="new-book-button" class="new-book-button">New book</button>
-  <table>
-    <thead>
-      <tr>
-        <td>Title</td>
-        <td>Author</td>
-        <td>Pages</td>
-        <td>Read</td>
-        <td>Action</td>
-      </tr>
-    </thead>
-    <tbody id="root"></tbody>
-  </table>
+  <header>
+    <h1>Project: Library</h1>
+  </header>
+  <div class="container">
+    <div class="table-header">
+      <h2>Manage Library</h2>
+      <button id="new-book-button" class="new-book-button">
+        <i class="material-icons">add_circle</i>
+        New book
+      </button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <td>Title</td>
+          <td>Author</td>
+          <td>Pages</td>
+          <td>Read</td>
+          <td>Action</td>
+        </tr>
+      </thead>
+      <tbody id="root"></tbody>
+    </table>
+  </div>
 
 </body>
 
