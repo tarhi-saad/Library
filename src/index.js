@@ -80,7 +80,7 @@ function render(books, row = null) {
   });
 }
 
-function validation(row) {
+function isValidInput(row) {
   const inputGroup = Array.from(row.querySelectorAll('input:not([type="checkbox"])'));
   const inputError = inputGroup.find(input => input.value === '');
 
@@ -122,7 +122,7 @@ function editBook(row) {
   row.replaceWith(tr);
   tr.querySelector('input').focus();
   tr.querySelector('.save').onclick = () => {
-    if (validation(tr)) return;
+    if (isValidInput(tr)) return;
 
     currentBook.title = tr.querySelector('#title').value;
     currentBook.author = tr.querySelector('#author').value;
@@ -165,7 +165,7 @@ newBookButton.onclick = () => {
   };
 
   tr.querySelector('.edit-add').onclick = () => {
-    if (validation(tr)) return;
+    if (isValidInput(tr)) return;
 
     addBookToLibrary(tr);
     tr.dataset.index = myLibrary.length - 1;
