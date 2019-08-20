@@ -16,10 +16,9 @@ Book.prototype.readStatus = function readStatus() {
   this.read = !this.read;
 };
 
-// this is just an example to fill our table. To delete later!
-const book1 = new Book('JavaScript', 'Saad Tarhi', 350, false);
-const book2 = new Book('CSS', 'Saad Tarhi', 350, false);
-myLibrary.push(book1, book2);
+function populateStorage() {
+  localStorage.setItem('library', JSON.stringify(myLibrary));
+}
 
 function addBookToLibrary(row) {
   const book = new Book();
@@ -28,6 +27,7 @@ function addBookToLibrary(row) {
   book.pages = row.querySelector('#pages').value;
   book.read = row.querySelector('#read').checked;
   myLibrary.push(book);
+  populateStorage();
 }
 
 function render(books, row = null) {
@@ -129,6 +129,7 @@ function editBook(row) {
     currentBook.pages = tr.querySelector('#pages').value;
     currentBook.read = tr.querySelector('#read').checked;
     render([currentBook], tr);
+    populateStorage();
   };
 }
 
@@ -185,6 +186,7 @@ view.onclick = (event) => {
       Array.from(view.rows).forEach((tr, i) => {
         tr.dataset.index = i;
       });
+      populateStorage();
       break;
     case 'is-read': {
       if (!row.dataset.index) return;
@@ -202,4 +204,10 @@ view.onclick = (event) => {
   }
 };
 
-render(myLibrary);
+function getLocalLibrary() {
+  const library = JSON.parse(localStorage.getItem('library'));
+  myLibrary.push(...library);
+  render(library);
+}
+// localStorage.clear();
+if (localStorage.getItem('library')) getLocalLibrary();
