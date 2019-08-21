@@ -1,5 +1,7 @@
 import './style.css';
 
+const table = document.querySelector('table');
+const emptyState = document.querySelector('.empty-state');
 const view = document.getElementById('root');
 const newBookButton = document.getElementById('new-book-button');
 // Store new book objects from user input in an array
@@ -31,6 +33,11 @@ function addBookToLibrary(row) {
 }
 
 function render(books, row = null) {
+  if (myLibrary.length !== 0) {
+    table.style.display = 'table';
+    emptyState.style.display = 'none';
+  }
+
   // Render the last created book
   if (books.length === 1 && row !== null) {
     const datas = row.cells;
@@ -135,6 +142,11 @@ function editBook(row) {
 
 // User input
 newBookButton.onclick = () => {
+  if (myLibrary.length === 0) {
+    table.style.display = 'table';
+    emptyState.style.display = 'none';
+  }
+
   if (view.querySelector('input[type="text"]')) {
     view.querySelector('input[type="text"]').focus();
     return;
@@ -163,6 +175,11 @@ newBookButton.onclick = () => {
   tr.querySelector('input').focus();
   tr.querySelector('.edit-cancel').onclick = () => {
     tr.remove();
+
+    if (myLibrary.length === 0) {
+      table.style.display = 'none';
+      emptyState.style.display = 'flex';
+    }
   };
 
   tr.querySelector('.edit-add').onclick = () => {
@@ -186,6 +203,12 @@ view.onclick = (event) => {
       Array.from(view.rows).forEach((tr, i) => {
         tr.dataset.index = i;
       });
+
+      if (myLibrary.length === 0) {
+        table.style.display = 'none';
+        emptyState.style.display = 'flex';
+      }
+
       populateStorage();
       break;
     case 'is-read': {

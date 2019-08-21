@@ -63,6 +63,7 @@ table {
   background-color: #fff;
   border-collapse: collapse;
   width: 100%;
+  display: none;
 }
 
 td {
@@ -250,4 +251,32 @@ input:checked + .slider:before {
 
 .required:focus {
   outline: none;
+}
+
+/* Empty state styles */
+.empty-state {
+  display: flex;
+  justify-content: center;
+}
+
+.empty-state p {
+  text-align: center;
+  font-size: 15px;
+  margin-bottom: 25px;
+}
+
+.empty-state .primary-title {
+  display: block;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.empty-state .call-to-action {
+  color: #299be4;
+  font-weight: bold;
+}
+
+.empty-state i {
+  font-size: 150px;
+  margin-bottom: 12px;
 }
