@@ -193,8 +193,15 @@ view.onclick = (event) => {
 
       const myBook = myLibrary[row.dataset.index];
       const readCell = Array.from(row.cells).find(td => td.querySelector('input'));
+
+      // The books that are retrieved from the Local Storage lose their prototype
+      if (myBook.constructor !== Book) {
+        Object.setPrototypeOf(myBook, Book.prototype);
+      }
+
       myBook.readStatus();
       readCell.querySelector('input').checked = myBook.read;
+      populateStorage();
       break;
     }
     case 'edit-book':
