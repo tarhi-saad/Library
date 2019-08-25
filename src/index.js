@@ -1,9 +1,11 @@
 import './style.css';
+import { firestore, auth } from './modules/firebase.config';
 
 const table = document.querySelector('table');
 const emptyState = document.querySelector('.empty-state');
 const view = document.getElementById('root');
 const newBookButton = document.getElementById('new-book-button');
+let user = auth.currentUser;
 // Store new book objects from user input in an array
 const myLibrary = [];
 
@@ -30,6 +32,24 @@ function addBookToLibrary(row) {
   book.read = row.querySelector('#read').checked;
   myLibrary.push(book);
   populateStorage();
+
+  // Firestore sync
+  const docRef = firestore.collection(`Users/${user.uid}/Books`).doc();
+  book.id = docRef.id;
+  docRef
+    .set({
+      id: book.id,
+      title: book.title,
+      author: book.author,
+      pages: book.pages,
+      read: book.read,
+    })
+    .then(() => {
+      console.log('Status saved!');
+    })
+    .catch((error) => {
+      console.error('Got an error', error);
+    });
 }
 
 function render(books, row = null) {
@@ -40,14 +60,23 @@ function render(books, row = null) {
 
   // Render the last created book
   if (books.length === 1 && row !== null) {
-    const datas = row.cells;
-    Object.values(books[0]).map((value, i) => {
-      if (typeof value === 'boolean') {
-        datas[i].querySelector('#read').checked = value;
-        return value;
+    Object.entries(books[0]).map(([key, value]) => {
+      switch (key) {
+        case 'read':
+          row.querySelector('#read').checked = value;
+          break;
+        case 'author':
+          row.querySelector('#author').closest('td').innerHTML = value;
+          break;
+        case 'title':
+          row.querySelector('#title').closest('td').innerHTML = value;
+          break;
+        case 'pages':
+          row.querySelector('#pages').closest('td').innerHTML = value;
+          break;
+        default:
+          break;
       }
-
-      datas[i].innerHTML = value;
       return value;
     });
     row.querySelector('.edit-controls').remove();
@@ -137,6 +166,21 @@ function editBook(row) {
     currentBook.read = tr.querySelector('#read').checked;
     render([currentBook], tr);
     populateStorage();
+
+    // firestore sync
+    const docRef = firestore.doc(`Users/${user.uid}/Books/${currentBook.id}`);
+    docRef
+      .update({
+        title: currentBook.title,
+        author: currentBook.author,
+        pages: currentBook.pages,
+      })
+      .then(() => {
+        console.log('Document successfully updated!');
+      })
+      .catch((error) => {
+        console.error('Error updating document: ', error);
+      });
   };
 }
 
@@ -198,18 +242,31 @@ view.onclick = (event) => {
 
   switch (myTarget.className) {
     case 'remove-book':
-      myLibrary.splice(row.dataset.index, 1);
-      row.remove();
-      Array.from(view.rows).forEach((tr, i) => {
-        tr.dataset.index = i;
-      });
+      {
+        const removedBook = myLibrary.splice(row.dataset.index, 1);
+        row.remove();
+        Array.from(view.rows).forEach((tr, i) => {
+          tr.dataset.index = i;
+        });
 
-      if (myLibrary.length === 0) {
-        table.style.display = 'none';
-        emptyState.style.display = 'flex';
+        if (myLibrary.length === 0) {
+          table.style.display = 'none';
+          emptyState.style.display = 'flex';
+        }
+
+        populateStorage();
+
+        // firestore sync
+        const docRef = firestore.doc(`Users/${user.uid}/Books/${removedBook[0].id}`);
+        docRef
+          .delete()
+          .then(() => {
+            console.log('Document successfully deleted!');
+          })
+          .catch((error) => {
+            console.error('Error removing document: ', error);
+          });
       }
-
-      populateStorage();
       break;
     case 'is-read': {
       if (!row.dataset.index) return;
@@ -225,6 +282,19 @@ view.onclick = (event) => {
       myBook.readStatus();
       readCell.querySelector('input').checked = myBook.read;
       populateStorage();
+
+      // firestore sync
+      const docRef = firestore.doc(`Users/${user.uid}/Books/${myBook.id}`);
+      docRef
+        .update({
+          read: myBook.read,
+        })
+        .then(() => {
+          console.log('Document successfully updated!');
+        })
+        .catch((error) => {
+          console.error('Error updating document: ', error);
+        });
       break;
     }
     case 'edit-book':
@@ -234,10 +304,29 @@ view.onclick = (event) => {
   }
 };
 
-function getLocalLibrary() {
-  const library = JSON.parse(localStorage.getItem('library'));
-  myLibrary.push(...library);
-  render(library);
-}
-// localStorage.clear();
-if (localStorage.getItem('library')) getLocalLibrary();
+// function getLocalLibrary() {
+//   const library = JSON.parse(localStorage.getItem('library'));
+//   myLibrary.push(...library);
+//   render(library);
+// }
+
+// if (localStorage.getItem('library')) getLocalLibrary();
+
+auth.onAuthStateChanged((currentUser) => {
+  user = currentUser;
+
+  if (currentUser) {
+    const collRef = firestore.collection(`Users/${user.uid}/Books`);
+    collRef
+      .get()
+      .then((datas) => {
+        datas.forEach((doc) => {
+          myLibrary.push(doc.data());
+        });
+        render(myLibrary);
+      })
+      .catch((error) => {
+        console.log('Error getting documents: ', error);
+      });
+  }
+});
