@@ -153,6 +153,16 @@ button {
   text-transform: uppercase;
 }
 
+.sign-out:hover,
+.sign-out:focus,
+.sign-out:active {
+  background-color: #2cadd4;
+}
+
+.sign-out:active:focus {
+  background-color: #2495b6;
+}
+
 .new-book-button {
   background-color: #fff;
   color: #566787;
@@ -333,4 +343,17 @@ input:checked + .slider:before {
 
 .empty-state .library-books {
   margin-bottom: 12px;
+}
+
+.sign-in-msg {
+  display: none;
+  text-align: center;
+  font-size: 16px;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  margin-bottom: 20px;
+  line-height: 1.9;
+}
+
+.sign-in-msg .strong {
+  font-weight: bold;
 }
