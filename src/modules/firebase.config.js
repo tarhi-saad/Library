@@ -28,14 +28,17 @@ const uiConfig = {
     // Leave the lines as is for the providers you want to offer your users.
     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
     firebase.auth.EmailAuthProvider.PROVIDER_ID,
+    firebase.auth.GithubAuthProvider.PROVIDER_ID,
   ],
   // tosUrl and privacyPolicyUrl accept either url string or a callback
   // function.
   // Terms of service url/callback.
-  tosUrl: '<your-tos-url>',
+  tosUrl: 'https://www.termsfeed.com/terms-service/fad5b9ee1339f75fed466ba49bce553c',
   // Privacy policy url/callback.
   privacyPolicyUrl() {
-    window.location.assign('<your-privacy-policy-url>');
+    window.location.assign(
+      'https://www.freeprivacypolicy.com/privacy/view/bcf409b18833342785ab94ed51935f1a',
+    );
   },
 };
 
@@ -73,6 +76,8 @@ const initApp = function initApp() {
         document.getElementById('firebaseui-auth-container').hidden = false;
         document.getElementById('sign-out').hidden = true;
         document.getElementById('sign-in').hidden = true;
+        document.body.style.backgroundColor = '#fff';
+        document.querySelector('.sign-in-msg').style.display = 'block';
       }
     },
     (error) => {

@@ -11,6 +11,7 @@ module.exports = {
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: 'src/index.html',
+      favicon: 'src/images/favicon.png',
     }),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
