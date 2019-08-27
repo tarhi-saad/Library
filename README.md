@@ -9,9 +9,9 @@ This is a complete and fully functionnal WebApp Library, with the ability to cre
 ## Table of contents
 
 1. [Demo](#demo)
-2. [Technologies](technologies)
-3. [Features](features)
-4. [Development](development)
+2. [Technologies](#technologies)
+3. [Features](#features)
+4. [Development](#development)
 
 ## Demo
 
