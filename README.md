@@ -2,9 +2,13 @@
 
 # Library WebApp
 
-This project is created solely using vanilla JS. Showcasing and making use of the concepts of [Prototypal inheritance](http://javascript.info/prototype-inheritance) and the [Constructor function](http://javascript.info/function-prototype).
+This project is created solely using vanilla JS. Showcasing and making use of the concepts of [Prototypal inheritance](http://javascript.info/prototype-inheritance) and the [Constructor function](http://javascript.info/function-prototype) _(without using the ES6 class syntax)_.
 
 This is a complete and fully functionnal WebApp Library, with the ability to create your own account and manage your own Library (Add, Edit, Delete your books). And all of your datas are synced and stored in the database using Google's mobile and web application development platform [Firebase](https://firebase.google.com/).
+
+<p align="center">
+  <img width="232" height="64" src="readme_img/firebase.png">
+</p>
 
 ## Table of contents
 
@@ -23,6 +27,9 @@ Here is the working live demo:
 - Javascript modules, ES6
 - [Firebase](https://firebase.google.com/) (firestrore & auth) & [FirebaseUI](https://github.com/firebase/firebaseui-web)
 - [Webpack 4](https://webpack.js.org/)
+
+  <img width="64" height="64" src="readme_img/webpack.png">
+  <img width="64" height="64" src="readme_img/firebase-logo.png">
 
 ## Features
 
